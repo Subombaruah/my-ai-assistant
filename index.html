@@ -4,13 +4,31 @@
   <title>My AI Assistant</title>
 </head>
 <body>
-  <h1>Welcome to My AI Assistant</h1>
-  <p>Click the button to talk to your AI.</p>
-  <button onclick="startAI()">Talk to Me</button>
+  <h1>Talk to Your AI</h1>
+  <textarea id="userInput" placeholder="Say something..." rows="4" cols="50"></textarea><br>
+  <button onclick="sendToAI()">Send</button>
+  <p><strong>AI says:</strong></p>
+  <div id="response"></div>
 
   <script>
-    function startAI() {
-      alert("Coming soon: Your AI will speak here!");
+    async function sendToAI() {
+      const input = document.getElementById("userInput").value;
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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 "  
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: input }]
+        })
+      });
+
+      const data = await response.json();
+      const reply = data.choices[0].message.content;
+      document.getElementById("response").innerText = reply;
     }
   </script>
 </body>
