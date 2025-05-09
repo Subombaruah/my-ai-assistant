@@ -31,5 +31,51 @@
       document.getElementById("response").innerText = reply;
     }
   </script>
+  <script>
+  const form = document.querySelector("form");
+  const input = document.querySelector("input");
+  const chatBox = document.createElement("div");
+  document.body.appendChild(chatBox);
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const userMessage = input.value.trim();
+    if (!userMessage) return;
+
+    // Show user message
+    const userBubble = document.createElement("p");
+    userBubble.textContent = "You: " + userMessage;
+    chatBox.appendChild(userBubble);
+
+    input.value = "";
+
+    // Fetch AI response
+    try {
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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"
+        },
+        body: JSON.stringify({
+          model: "gpt-3.5-turbo",
+          messages: [{ role: "user", content: userMessage }]
+        })
+      });
+
+      const data = await res.json();
+      const aiResponse = data.choices?.[0]?.message?.content || "No response";
+
+      const aiBubble = document.createElement("p");
+      aiBubble.textContent = "AI: " + aiResponse;
+      chatBox.appendChild(aiBubble);
+    } catch (err) {
+      console.error(err);
+      const errorBubble = document.createElement("p");
+      errorBubble.textContent = "Error: Could not reach AI.";
+      chatBox.appendChild(errorBubble);
+    }
+  });
+</script
 </body>
 </html>
